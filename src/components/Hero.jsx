@@ -86,16 +86,7 @@ const Hero = () => {
                   <path d="M8 5v14l11-7z" />
                 </svg>
               )}
-
-              <span className="text-xs font-light tracking-widest uppercase">
-                {isPlaying ? "Pausar música" : "Música de fondo"}
-              </span>
             </button>
-
-            {/* Aclaración del tema musical */}
-            <span className="text-[10px] text-neutral-400 font-light italic mt-2 tracking-wider">
-              Photograph — Ed Sheeran
-            </span>
           </div>
         </div>
       </div>

@@ -82,7 +82,7 @@ const Dresscode = () => {
                 <span className="font-semibold text-pink-400">Nota:</span> Se
                 reserva el color{" "}
                 <span className="underline decoration-pink-500 underline-offset-2 font-medium">
-                  rosa
+                  <span className="font-semibold text-pink-400">ROSA</span>
                 </span>{" "}
                 exclusivamente para la cumpleañera.
               </p>

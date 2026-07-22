@@ -154,7 +154,7 @@ const RsvpForm = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-pink-600 hover:bg-pink-700 text-white font-semibold uppercase tracking-wider text-[11px] py-4 rounded-xl shadow-md cursor-pointer block disabled:opacity-50 transition-all"
+            className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-medium uppercase tracking-widest text-[11px] py-3 px-6 rounded-full shadow-lg transition-all duration-300 transform active:scale-95 border border-pink-400/30 cursor-pointer"
           >
             {loading ? "Guardando..." : "Confirmar Asistencia"}
           </button>
