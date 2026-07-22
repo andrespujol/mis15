@@ -60,8 +60,8 @@ const MenuSection = () => {
         style={{
           backgroundColor: "#090306",
           backgroundImage: `
-            radial-gradient(ellipse at 50% -10%, rgba(212, 160, 60, 0.45) 0%, transparent 55%),
-            radial-gradient(ellipse at 50% 110%, rgba(225, 29, 114, 0.4) 0%, transparent 55%),
+            radial-gradient(ellipse at 50% -10%, rgba(225, 29, 114, 0.4) 0%, transparent 55%),
+            radial-gradient(ellipse at 50% 110%, rgba(212, 160, 60, 0.45) 0%, transparent 55%),
             radial-gradient(circle at center, #1c0a15 0%, #090306 100%)
           `,
         }}
@@ -128,9 +128,9 @@ const MenuSection = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-medium uppercase tracking-widest text-[10px] py-3 px-4 rounded-full shadow-lg transition-all transform active:scale-95 hover:scale-105 border border-pink-400/30 cursor-pointer disabled:opacity-50 mt-2"
+                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-medium uppercase tracking-widest text-[10px] py-3 px-4 rounded-full shadow-lg transition-all transform active:scale-95 hover:border-pink-400/30 cursor-pointer disabled:opacity-50 mt-2"
               >
-                {loading ? "Guardando..." : "Enviar mensaje"}
+                {loading ? "Enviando..." : "Enviar mensaje"}
               </button>
             </form>
           </div>

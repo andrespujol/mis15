@@ -30,7 +30,7 @@ function App() {
 
       <Dresscode />
 
-      <PhotoSeparator image={fotoBook2} />
+      <PhotoSeparator image={fotoBook2} inverted={false} />
 
       <RsvpForm />
 
@@ -40,7 +40,7 @@ function App() {
 
       <MenuSection />
 
-      <PhotoSeparator image={fotoBook3} nameBanner={true} />
+      <PhotoSeparator image={fotoBook3} nameBanner inverted />
 
       <Toaster
         position="top-center"

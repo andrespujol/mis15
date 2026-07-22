@@ -25,8 +25,8 @@ const GiftSuggestion = () => {
         style={{
           backgroundColor: "#090306",
           backgroundImage: `
-            radial-gradient(ellipse at 50% -10%, rgba(212, 160, 60, 0.45) 0%, transparent 55%),
-            radial-gradient(ellipse at 50% 110%, rgba(225, 29, 114, 0.4) 0%, transparent 55%),
+            radial-gradient(ellipse at 50% -10%, rgba(225, 29, 114, 0.4) 0%, transparent 55%),
+            radial-gradient(ellipse at 50% 110%, rgba(212, 160, 60, 0.45) 0%, transparent 55%),
             radial-gradient(circle at center, #1c0a15 0%, #090306 100%)
           `,
         }}
@@ -35,7 +35,7 @@ const GiftSuggestion = () => {
 
         {/* Recuadro Central */}
         <div
-          className="relative max-w-sm w-full aspect-[9/16] rounded-3xl p-6 md:p-8 flex flex-col justify-center items-center border border-purple-500/30 shadow-[0_25px_60px_rgba(0,0,0,0.8)] overflow-hidden bg-cover bg-center"
+          className="relative max-w-sm w-full aspect-[9/16] rounded-3xl p-6 md:p-8 flex flex-col justify-center items-center border border-purple-500/30 shadow-[0_15px_35px_rgba(0,0,0,0.5)] overflow-hidden bg-cover bg-center"
           style={{ backgroundImage: `url(${fondoCard})` }}
         >
           {/* Capas de fondo */}

@@ -38,7 +38,7 @@ const Hero = () => {
 
         {/* Recuadro central */}
         <div
-          className="relative max-w-sm w-full aspect-[9/16] rounded-3xl p-8 flex flex-col items-center justify-center border border-amber-500/30 shadow-[0_25px_60px_rgba(0,0,0,0.8)] overflow-hidden bg-cover bg-center"
+          className="relative max-w-sm w-full aspect-[9/16] rounded-3xl p-8 flex flex-col items-center justify-center border border-amber-500/30 shadow-[0_10px_30px_rgba(0,0,0,0.6)] overflow-hidden bg-cover bg-center"
           style={{
             backgroundImage: `url(${fondoCard})`,
           }}
