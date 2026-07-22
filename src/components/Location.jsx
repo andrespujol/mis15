@@ -42,6 +42,9 @@ const Location = () => {
           <p className="text-lg text-neutral-300 italic">
             Bartolome Mitre 1265, Capital Federal
           </p>
+          <p className="text-lg text-neutral-400 italic">
+            El 06 de septiembre de 2026
+          </p>
           <p className="text-lg text-neutral-400 italic mb-10">
             de 14 a 22 hs.
           </p>

@@ -74,7 +74,7 @@ const Dresscode = () => {
             </p>
 
             <p className="text-xs md:text-sm font-light text-neutral-300 leading-relaxed mb-6">
-              Te pedimos asistir con vestimenta formal para compartir esta noche
+              Te pedimos asistir con vestimenta formal para compartir este día
               especial juntos.
             </p>
             <div className="mt-2 px-4 py-2.5 rounded-2xl bg-[#1c0a15]/80 border border-amber-500/30 backdrop-blur-sm">
