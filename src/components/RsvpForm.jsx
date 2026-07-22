@@ -24,10 +24,13 @@ const RsvpForm = () => {
       return;
     }
 
+    // 1. Abrimos la ventana inmediatamente para evitar que el navegador la bloquee
+    const newWindow = window.open("", "_blank");
+
     setLoading(true);
 
     try {
-      // 1. Guardar la respuesta en Firestore
+      // 2. Guardar la respuesta en Firestore
       await addDoc(collection(db, "confirmaciones"), {
         nombre: formData.name.trim(),
         asistencia: formData.attendance === "yes" ? "Si" : "No",
@@ -36,7 +39,7 @@ const RsvpForm = () => {
 
       toast.success("¡Respuesta guardada!");
 
-      // 2. Preparar el mensaje de WhatsApp
+      // 3. Preparar el mensaje de WhatsApp
       const asistira =
         formData.attendance === "yes"
           ? "¡Sí, confirmo asistencia! "
@@ -45,21 +48,26 @@ const RsvpForm = () => {
       messageText += `*Nombre:* ${formData.name}\n`;
       messageText += `*Confirmación:* ${asistira}`;
 
-      // 3. LIMPIAR EL FORMULARIO
+      const encodedMessage = encodeURIComponent(messageText);
+      const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
+
+      // 4. Redireccionar la ventana que abrimos al principio
+      if (newWindow) {
+        newWindow.location.href = whatsappUrl;
+      } else {
+        // Fallback si aun así la bloqueó el navegador
+        window.location.href = whatsappUrl;
+      }
+
+      // 5. Limpiar el formulario
       setFormData({
         name: "",
         attendance: "yes",
       });
-
-      // 4. Redirigir a WhatsApp
-      const encodedMessage = encodeURIComponent(messageText);
-      window.open(
-        `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`,
-        "_blank",
-      );
     } catch (error) {
       console.error("Error al guardar en Firebase:", error);
       toast.error("Hubo un problema al guardar la confirmación.");
+      if (newWindow) newWindow.close();
     } finally {
       setLoading(false);
     }
