@@ -10,7 +10,7 @@ const MessageForm = () => {
   });
   const [loading, setLoading] = useState(false);
 
-  const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER_SECONDARY;
+  const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
