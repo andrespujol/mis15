@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
+import { db } from "../services/firebase.js";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 const MessageForm = () => {
   const [formData, setFormData] = useState({
     name: "",
     message: "",
   });
+  const [loading, setLoading] = useState(false);
 
   const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER_SECONDARY;
 
@@ -14,13 +17,12 @@ const MessageForm = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const isNameEmpty = !formData.name.trim();
     const isMessageEmpty = !formData.message.trim();
 
-    // Validaciones específicas
     if (isNameEmpty && isMessageEmpty) {
       toast.error("Por favor, ingresá tu nombre y el mensaje");
       return;
@@ -32,23 +34,45 @@ const MessageForm = () => {
     }
 
     if (isMessageEmpty) {
-      toast.error("Por favor, escribí un mensaje para la dedicatoria", {
-        icon: "⚠️",
-      });
+      toast.error("Por favor, escribí un mensaje para la dedicatoria");
       return;
     }
 
-    // Si pasa todas las validaciones, arma el mensaje y abre WhatsApp
-    let messageText = `Hola Morena! Quería dejarte un mensajito especial:\n\n`;
-    messageText += `"${formData.message.trim()}"\n\n`;
-    messageText += `De: ${formData.name.trim()}`;
+    setLoading(true);
 
-    const encodedMessage = encodeURIComponent(messageText);
-    window.open(
-      `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`,
-      "_blank",
-    );
+    try {
+      await addDoc(collection(db, "mensajes"), {
+        nombre: formData.name.trim(),
+        mensaje: formData.message.trim(),
+        fecha: serverTimestamp(),
+      });
+
+      toast.success("¡Mensaje guardado!");
+
+      let messageText = `Hola More! Quería dejarte un mensajito especial:\n\n`;
+      messageText += `"${formData.message.trim()}"\n\n`;
+      messageText += `De: ${formData.name.trim()}`;
+
+      // 3. Limpiar formulario
+      setFormData({
+        name: "",
+        message: "",
+      });
+
+      // 4. Redirigir a WhatsApp
+      const encodedMessage = encodeURIComponent(messageText);
+      window.open(
+        `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`,
+        "_blank",
+      );
+    } catch (error) {
+      console.error("Error al guardar mensaje en Firebase:", error);
+      toast.error("Hubo un problema al guardar tu mensaje.");
+    } finally {
+      setLoading(false);
+    }
   };
+
   return (
     <div className="bg-neutral-100 text-neutral-800 min-h-screen w-full flex items-center justify-center px-4 text-center border-t border-neutral-200">
       <div className="w-full max-w-md mx-auto py-12 text-left">
@@ -88,7 +112,8 @@ const MessageForm = () => {
               value={formData.name}
               onChange={handleChange}
               placeholder="Ej: Sofía"
-              className="w-full px-4 py-3 rounded-xl border border-neutral-200 focus:outline-none focus:border-pink-500 bg-neutral-50 text-neutral-800 text-sm transition-all"
+              disabled={loading}
+              className="w-full px-4 py-3 rounded-xl border border-neutral-200 focus:outline-none focus:border-pink-500 bg-neutral-50 text-neutral-800 text-sm transition-all disabled:opacity-50"
             />
           </div>
 
@@ -102,15 +127,17 @@ const MessageForm = () => {
               onChange={handleChange}
               rows="4"
               placeholder="Escribí tu saludo acá..."
-              className="w-full px-4 py-3 rounded-xl border border-neutral-200 focus:outline-none focus:border-pink-500 bg-neutral-50 text-neutral-800 resize-none text-sm transition-all"
+              disabled={loading}
+              className="w-full px-4 py-3 rounded-xl border border-neutral-200 focus:outline-none focus:border-pink-500 bg-neutral-50 text-neutral-800 resize-none text-sm transition-all disabled:opacity-50"
             />
           </div>
 
           <button
             type="submit"
-            className="w-full bg-pink-600 hover:bg-pink-700 text-white font-semibold uppercase tracking-wider text-[11px] py-4 rounded-xl shadow-md cursor-pointer transition-all transform hover:scale-[1.02] active:scale-95 block"
+            disabled={loading}
+            className="w-full bg-pink-600 hover:bg-pink-700 text-white font-semibold uppercase tracking-wider text-[11px] py-4 rounded-xl shadow-md cursor-pointer transition-all transform hover:scale-[1.02] active:scale-95 block disabled:opacity-50"
           >
-            Enviar Mensaje por WhatsApp
+            {loading ? "Guardando..." : "Enviar Mensaje por WhatsApp"}
           </button>
         </form>
       </div>

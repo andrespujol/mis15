@@ -1,6 +1,6 @@
 import React from "react";
 import ParallaxContainer from "./ParallaxContainer";
-import fondoCard from "../assets/fondo.png";
+import fondoCard from "../assets/fondo1.png";
 
 const Dresscode = () => {
   return (
@@ -8,11 +8,11 @@ const Dresscode = () => {
       <div
         className="w-full min-h-screen flex items-center justify-center px-6 py-16 text-center relative overflow-hidden select-none"
         style={{
-          backgroundColor: "#0c0514",
+          backgroundColor: "#090306",
           backgroundImage: `
-            radial-gradient(circle at 50% 10%, rgba(168, 85, 247, 0.25) 0%, transparent 60%), 
-            radial-gradient(circle at 50% 90%, rgba(236, 72, 153, 0.2) 0%, transparent 60%),
-            radial-gradient(ellipse at center, rgba(27, 15, 43, 0.8) 0%, #0c0514 100%)
+            radial-gradient(ellipse at 50% -10%, rgba(212, 160, 60, 0.45) 0%, transparent 55%),
+            radial-gradient(ellipse at 50% 110%, rgba(225, 29, 114, 0.4) 0%, transparent 55%),
+            radial-gradient(circle at center, #1c0a15 0%, #090306 100%)
           `,
         }}
       >
@@ -26,7 +26,7 @@ const Dresscode = () => {
           }}
         >
           {/* Overlay de oscuridad sobre la imagen de fondo */}
-          <div className="absolute inset-0 bg-[#1b0f2b]/85 backdrop-blur-[2px] z-0" />
+          {/* <div className="absolute inset-0 bg-[#1b0f2b]/85 backdrop-blur-[2px] z-0" /> */}
 
           {/* Borde interno decorativo */}
           <div className="absolute inset-3 rounded-2xl border border-pink-400/20 pointer-events-none z-10" />
@@ -77,7 +77,16 @@ const Dresscode = () => {
               Te pedimos asistir con vestimenta formal para compartir esta noche
               especial juntos.
             </p>
-
+            <div className="mt-2 px-4 py-2.5 rounded-2xl bg-[#1c0a15]/80 border border-amber-500/30 backdrop-blur-sm">
+              <p className="text-[11px] font-light text-amber-200 tracking-wide leading-tight">
+                <span className="font-semibold text-pink-400">Nota:</span> Se
+                reserva el color{" "}
+                <span className="underline decoration-pink-500 underline-offset-2 font-medium">
+                  rosa
+                </span>{" "}
+                exclusivamente para la cumpleañera.
+              </p>
+            </div>
             {/* <button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-light uppercase tracking-widest text-xs py-3 px-6 rounded-full shadow-lg transition-all transform hover:scale-105 border border-pink-400/30 cursor-pointer">
               Ver Sugerencias
             </button> */}

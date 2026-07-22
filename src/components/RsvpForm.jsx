@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
+import { db } from "../services/firebase.js";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 const RsvpForm = () => {
   const [formData, setFormData] = useState({
     name: "",
     attendance: "yes",
   });
+  const [loading, setLoading] = useState(false);
 
   const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER;
 
@@ -14,26 +17,52 @@ const RsvpForm = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name.trim()) {
       toast.error("Por favor, ingresá tu nombre");
       return;
     }
 
-    const asistira =
-      formData.attendance === "yes"
-        ? "¡Sí, confirmo asistencia! "
-        : "Lamentablemente no puedo ir :(";
-    let messageText = `Hola Morena! Vengo de tu invitación digital a confirmar mi asistencia.\n\n`;
-    messageText += `*Nombre:* ${formData.name}\n`;
-    messageText += `*Confirmación:* ${asistira}`;
+    setLoading(true);
 
-    const encodedMessage = encodeURIComponent(messageText);
-    window.open(
-      `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`,
-      "_blank",
-    );
+    try {
+      // 1. Guardar la respuesta en Firestore
+      await addDoc(collection(db, "confirmaciones"), {
+        nombre: formData.name.trim(),
+        asistencia: formData.attendance === "yes" ? "Si" : "No",
+        fecha: serverTimestamp(),
+      });
+
+      toast.success("¡Respuesta guardada!");
+
+      // 2. Preparar el mensaje de WhatsApp
+      const asistira =
+        formData.attendance === "yes"
+          ? "¡Sí, confirmo asistencia! "
+          : "Lamentablemente no puedo ir :(";
+      let messageText = `Hola Morena! Vengo de tu invitación digital a confirmar mi asistencia.\n\n`;
+      messageText += `*Nombre:* ${formData.name}\n`;
+      messageText += `*Confirmación:* ${asistira}`;
+
+      // 3. LIMPIAR EL FORMULARIO
+      setFormData({
+        name: "",
+        attendance: "yes",
+      });
+
+      // 4. Redirigir a WhatsApp
+      const encodedMessage = encodeURIComponent(messageText);
+      window.open(
+        `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`,
+        "_blank",
+      );
+    } catch (error) {
+      console.error("Error al guardar en Firebase:", error);
+      toast.error("Hubo un problema al guardar la confirmación.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -75,7 +104,8 @@ const RsvpForm = () => {
               value={formData.name}
               onChange={handleChange}
               placeholder="Ej: Juan Pérez"
-              className="w-full px-4 py-3 rounded-xl border border-neutral-200 focus:outline-none focus:border-pink-500 bg-neutral-50 text-neutral-800 text-sm"
+              disabled={loading}
+              className="w-full px-4 py-3 rounded-xl border border-neutral-200 focus:outline-none focus:border-pink-500 bg-neutral-50 text-neutral-800 text-sm disabled:opacity-50"
             />
           </div>
 
@@ -85,7 +115,11 @@ const RsvpForm = () => {
             </label>
             <div className="grid grid-cols-2 gap-4">
               <label
-                className={`flex items-center justify-center py-3.5 border rounded-xl cursor-pointer font-medium text-sm transition-all ${formData.attendance === "yes" ? "bg-pink-50 border-pink-400 text-pink-700 font-semibold" : "border-neutral-200 bg-neutral-50 text-neutral-400"}`}
+                className={`flex items-center justify-center py-3.5 border rounded-xl cursor-pointer font-medium text-sm transition-all ${
+                  formData.attendance === "yes"
+                    ? "bg-pink-50 border-pink-400 text-pink-700 font-semibold"
+                    : "border-neutral-200 bg-neutral-50 text-neutral-400"
+                }`}
               >
                 <input
                   type="radio"
@@ -98,7 +132,11 @@ const RsvpForm = () => {
                 Sí, asisto
               </label>
               <label
-                className={`flex items-center justify-center py-3.5 border rounded-xl cursor-pointer font-medium text-sm transition-all ${formData.attendance === "no" ? "bg-neutral-800 border-neutral-800 text-white font-semibold" : "border-neutral-200 bg-neutral-50 text-neutral-400"}`}
+                className={`flex items-center justify-center py-3.5 border rounded-xl cursor-pointer font-medium text-sm transition-all ${
+                  formData.attendance === "no"
+                    ? "bg-neutral-800 border-neutral-800 text-white font-semibold"
+                    : "border-neutral-200 bg-neutral-50 text-neutral-400"
+                }`}
               >
                 <input
                   type="radio"
@@ -115,9 +153,10 @@ const RsvpForm = () => {
 
           <button
             type="submit"
-            className="w-full bg-pink-600 hover:bg-pink-700 text-white font-semibold uppercase tracking-wider text-[11px] py-4 rounded-xl shadow-md cursor-pointer block"
+            disabled={loading}
+            className="w-full bg-pink-600 hover:bg-pink-700 text-white font-semibold uppercase tracking-wider text-[11px] py-4 rounded-xl shadow-md cursor-pointer block disabled:opacity-50 transition-all"
           >
-            Confirmar Asistencia
+            {loading ? "Guardando..." : "Confirmar Asistencia"}
           </button>
         </form>
       </div>

@@ -7,9 +7,11 @@ const PhotoSeparator = ({ image, nameBanner = false }) => {
       <div
         className="w-full min-h-screen flex items-center justify-center px-4 md:px-8 py-16 text-center relative select-none"
         style={{
-          backgroundColor: "rgba(12, 5, 20, 0.75)",
-          backgroundImage: `radial-gradient(circle at 25% 30%, rgba(168, 85, 247, 0.2) 0%, transparent 50%), 
-                            radial-gradient(circle at 75% 70%, rgba(236, 72, 153, 0.15) 0%, transparent 50%)`,
+          backgroundColor: "rgba(9, 3, 6, 0.75)", // Fondo negro/burdeos con transparencia
+          backgroundImage: `
+            radial-gradient(circle at 25% 30%, rgba(212, 160, 60, 0.35) 0%, transparent 50%), 
+            radial-gradient(circle at 75% 70%, rgba(225, 29, 114, 0.25) 0%, transparent 50%)
+          `,
         }}
       >
         <div className="absolute inset-0 opacity-20 pointer-events-none bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-950/40 via-transparent to-transparent" />

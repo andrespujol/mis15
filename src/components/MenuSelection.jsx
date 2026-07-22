@@ -1,15 +1,56 @@
-import React from "react";
+import React, { useState } from "react";
+import toast from "react-hot-toast";
 import ParallaxContainer from "./ParallaxContainer";
-import fondoCard from "../assets/fondo.png";
+import fondoCard from "../assets/fondo1.png";
+import { db } from "../services/firebase.js";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 const MenuSection = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    preference: "",
+  });
+  const [loading, setLoading] = useState(false);
+
   const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER;
 
-  const handleMenuRequest = () => {
-    const text = encodeURIComponent(
-      "Hola More! Te quería avisar que tengo una preferencia / restricción alimentaria para el menú (celíaco, vegetariano, vegano, alergia): ",
-    );
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`, "_blank");
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleMenuSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!formData.name.trim() || !formData.preference.trim()) {
+      toast.error("Por favor completá tu nombre y restricción");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      await addDoc(collection(db, "menues_especiales"), {
+        nombre: formData.name.trim(),
+        restriccion: formData.preference.trim(),
+        fecha: serverTimestamp(),
+      });
+
+      toast.success("¡Preferencia guardada!");
+
+      const text = encodeURIComponent(
+        `Hola More! Soy ${formData.name.trim()} y te quería avisar que tengo una preferencia/restricción alimentaria: ${formData.preference.trim()}`,
+      );
+
+      setFormData({ name: "", preference: "" });
+
+      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`, "_blank");
+    } catch (error) {
+      console.error("Error al guardar menú especial:", error);
+      toast.error("Hubo un error al guardar tu respuesta");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -17,11 +58,11 @@ const MenuSection = () => {
       <div
         className="w-full min-h-screen flex items-center justify-center px-6 py-16 text-center relative overflow-hidden select-none"
         style={{
-          backgroundColor: "#0c0514",
+          backgroundColor: "#090306",
           backgroundImage: `
-            radial-gradient(circle at 50% 10%, rgba(168, 85, 247, 0.25) 0%, transparent 60%), 
-            radial-gradient(circle at 50% 90%, rgba(236, 72, 153, 0.2) 0%, transparent 60%),
-            radial-gradient(ellipse at center, rgba(27, 15, 43, 0.8) 0%, #0c0514 100%)
+            radial-gradient(ellipse at 50% -10%, rgba(212, 160, 60, 0.45) 0%, transparent 55%),
+            radial-gradient(ellipse at 50% 110%, rgba(225, 29, 114, 0.4) 0%, transparent 55%),
+            radial-gradient(circle at center, #1c0a15 0%, #090306 100%)
           `,
         }}
       >
@@ -29,20 +70,17 @@ const MenuSection = () => {
 
         {/* Recuadro central */}
         <div
-          className="relative max-w-sm w-full aspect-[9/16] rounded-3xl p-6 md:p-8 flex flex-col items-center justify-center border border-purple-500/30 shadow-[0_25px_60px_rgba(0,0,0,0.8)] overflow-hidden bg-cover bg-center"
+          className="relative max-w-sm w-full rounded-3xl p-6 md:p-8 flex flex-col items-center justify-center border border-purple-500/30 shadow-[0_25px_60px_rgba(0,0,0,0.8)] overflow-hidden bg-cover bg-center"
           style={{
             backgroundImage: `url(${fondoCard})`,
           }}
         >
-          {/* Capa de oscuridad sobre la imagen para legibilidad */}
-          <div className="absolute inset-0 bg-[#1b0f2b]/85 backdrop-blur-[2px] z-0" />
-
           {/* Borde interno decorativo */}
           <div className="absolute inset-3 rounded-2xl border border-pink-400/20 pointer-events-none z-10" />
 
           {/* Contenido principal */}
           <div className="relative z-20 flex flex-col items-center w-full max-w-[280px]">
-            <div className="text-pink-400 w-12 h-12 mb-3 drop-shadow-[0_0_8px_rgba(236,72,153,0.4)]">
+            <div className="text-pink-400 w-12 h-12 mb-2 drop-shadow-[0_0_8px_rgba(236,72,153,0.4)]">
               <svg
                 fill="none"
                 stroke="currentColor"
@@ -57,22 +95,44 @@ const MenuSection = () => {
               </svg>
             </div>
 
-            <h2 className="text-3xl md:text-4xl font-serif text-white font-normal italic tracking-wide mb-3 drop-shadow-[0_2px_10px_rgba(236,72,153,0.3)]">
+            <h2 className="text-3xl md:text-4xl font-serif text-white font-normal italic tracking-wide mb-2 drop-shadow-[0_2px_10px_rgba(236,72,153,0.3)]">
               Menú Especial
             </h2>
 
-            <p className="text-xs md:text-sm font-light text-neutral-300 leading-relaxed mb-6">
-              Si tenés alguna restricción alimentaria (celíaco, vegetariano,
-              vegano, o alguna alergia), por favor avisanos para que te podamos
-              preparar una comida especial.
+            <p className="text-xs font-light text-neutral-300 leading-relaxed mb-5">
+              Si tenés alguna restricción (celíaco, vegetariano, vegano,
+              alergia), avisamos para prepararlo.
             </p>
 
-            <button
-              onClick={handleMenuRequest}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-light uppercase tracking-widest text-xs py-3 px-6 rounded-full shadow-lg transition-all transform active:scale-95 hover:scale-105 border border-pink-400/30 cursor-pointer"
-            >
-              Enviar mensaje
-            </button>
+            <form onSubmit={handleMenuSubmit} className="w-full space-y-3">
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Tu nombre"
+                disabled={loading}
+                className="w-full px-4 py-2.5 rounded-xl border border-pink-500/30 bg-black/40 text-white placeholder-neutral-400 text-xs focus:outline-none focus:border-pink-500 backdrop-blur-sm"
+              />
+
+              <input
+                type="text"
+                name="preference"
+                value={formData.preference}
+                onChange={handleChange}
+                placeholder="Ej: Celíaco / Vegetariano"
+                disabled={loading}
+                className="w-full px-4 py-2.5 rounded-xl border border-pink-500/30 bg-black/40 text-white placeholder-neutral-400 text-xs focus:outline-none focus:border-pink-500 backdrop-blur-sm"
+              />
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-light uppercase tracking-widest text-[10px] py-3 px-4 rounded-full shadow-lg transition-all transform active:scale-95 hover:scale-105 border border-pink-400/30 cursor-pointer disabled:opacity-50 mt-2"
+              >
+                {loading ? "Guardando..." : "Enviar mensaje"}
+              </button>
+            </form>
           </div>
         </div>
       </div>
